@@ -35,17 +35,27 @@ public class PayCreditsPanel : MonoBehaviour
         expenseContent.transform.DestroyChildren();
         expenseScrollRect.verticalNormalizedPosition = 0;
 
-        var types = GameManager.KakeiboManager.Types;
-        foreach (var typeData in types)
-        {
-            var buttonLayout = Instantiate(buttonLayoutPrefab, buttonContent.transform);
-            buttonLayout.SetData(typeData);
-            buttonLayout.OnPressed += OnTypeButtonPressed;
-        }
+        CreateTypeButtons();
 
         UpdateExpenses();
         ShowExpenses(_sortedExpenses);
         UpdateTotal();
+    }
+
+    void CreateTypeButtons()
+    {
+        var types = GameManager.KakeiboManager.Types;
+        foreach (var typeData in types)
+        {
+            if (typeData.IsDebit)
+            {
+                continue;
+            }
+
+            var buttonLayout = Instantiate(buttonLayoutPrefab, buttonContent.transform);
+            buttonLayout.SetData(typeData);
+            buttonLayout.OnPressed += OnTypeButtonPressed;
+        }
     }
 
     void UpdateExpenses()
