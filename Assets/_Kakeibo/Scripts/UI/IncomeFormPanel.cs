@@ -15,14 +15,12 @@ public class IncomeFormPanel : MonoBehaviour
     [SerializeField] Button submitButton;
     [SerializeField] Button backButton;
 
-    List<CurrencyData> _currencies;
+    public List<CurrencyData> Currencies => GameManager.KakeiboManager.Currencies;
 
     void Awake()
     {
         submitButton.onClick.AddListener(SaveIncomeHandler);
         backButton.onClick.AddListener(OpenHomePanelHandler);
-
-        _currencies = GameManager.KakeiboManager.GetAllCurrencies();
     }
 
     public void Initialize()
@@ -35,7 +33,7 @@ public class IncomeFormPanel : MonoBehaviour
         datePicker.SelectedDate = DateTime.Now;
         amountInput.text = string.Empty;
         currencyDropdown.ClearOptions();
-        currencyDropdown.AddOptions(_currencies.Select(c => c.Name).ToList());
+        currencyDropdown.AddOptions(Currencies.Select(c => c.Name).ToList());
         descriptionInput.text = string.Empty;
     }
 
@@ -50,7 +48,7 @@ public class IncomeFormPanel : MonoBehaviour
         {
             Date = datePicker.SelectedDate.Date,
             Amount = decimal.Parse(amountInput.text),
-            Currency = _currencies[currencyDropdown.value],
+            Currency = Currencies[currencyDropdown.value],
             Description = descriptionInput.text
         };
 

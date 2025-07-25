@@ -64,6 +64,11 @@ public class SQLController
         _dataBase.Update(data);
     }
 
+    public void UpdateAll<T>(IEnumerable<T> data) where T : SQLiteData, new()
+    {
+        _dataBase.UpdateAll(data);
+    }
+
     public void Destroy<T>(T data) where T : SQLiteData, new()
     {
         _dataBase.Delete<ExpenseSQLData>(data.Id);

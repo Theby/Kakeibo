@@ -41,6 +41,8 @@ public class ExpenseData
         }
 
         expenseSQLData.Date = Date.Ticks;
+        expenseSQLData.Year = Date.Year;
+        expenseSQLData.Month = Date.Month;
         expenseSQLData.BillingYear = BillingDate.Year;
         expenseSQLData.BillingMonth = BillingDate.Month;
         expenseSQLData.TypeId = Type.SQLId;

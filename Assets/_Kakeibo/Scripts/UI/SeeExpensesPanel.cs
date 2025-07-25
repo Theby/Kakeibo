@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -18,24 +17,20 @@ public class SeeExpensesPanel : MonoBehaviour
 
     public void Initialize()
     {
-        foreach (Transform child in content.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        content.transform.DestroyChildren();
+        scrollRect.verticalNormalizedPosition = 0;
 
         var expenses = GameManager.KakeiboManager.GetExpensesBy(e => !e.Paid || e.BillingYear == 2025 && e.BillingMonth == 7);
         var sortedExpenses = expenses.OrderBy(e => e.Date);
-
-        CultureInfo culture = new CultureInfo("es-CL");
 
         foreach (var expenseData in sortedExpenses)
         {
             var expenseDisplay = Instantiate(textPrefab, content.transform);
             expenseDisplay.SetText(
-                $"{expenseData.Date:yyyy/MM/dd}\n" +
+                $"{expenseData.Date.ToCalendarDate()}\n" +
                 $"{expenseData.Category.CategorySection.Name}/{expenseData.Category.Name}\n" +
-                $"{expenseData.Type.Name}: <b>{expenseData.Amount.ToString("C", culture)}</b>\n" +
-                $"{expenseData.Description}");
+                $"{expenseData.Type.Name}: <b>{expenseData.Amount.ToCurrencyString()}</b>\n" +
+                $"{expenseData.Description}\n");
         }
     }
 

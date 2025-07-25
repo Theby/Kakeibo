@@ -13,13 +13,12 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         _sqlController = new SQLController();
-        _sqlController.Initialize();
-
-        kakeiboManager.Initialize(_sqlController);
         KakeiboManager = kakeiboManager;
-
-        canvasManager.Initialize();
         CanvasManager = canvasManager;
+
+        _sqlController.Initialize();
+        kakeiboManager.Initialize(_sqlController);
+        canvasManager.Initialize();
     }
 
     void OnDestroy()

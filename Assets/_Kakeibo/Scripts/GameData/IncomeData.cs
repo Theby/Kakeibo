@@ -33,6 +33,7 @@ public class IncomeData
         }
 
         incomeSQLData.Date = Date.Ticks;
+        incomeSQLData.Year = Date.Year;
         incomeSQLData.Amount = Amount;
         incomeSQLData.CurrencyId = Currency.SQLId;
         incomeSQLData.Description = Description;

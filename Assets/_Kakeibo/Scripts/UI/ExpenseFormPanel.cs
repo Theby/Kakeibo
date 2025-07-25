@@ -18,18 +18,14 @@ public class ExpenseFormPanel : MonoBehaviour
     [SerializeField] Button submitButton;
     [SerializeField] Button backButton;
 
-    List<TypeData> _types;
-    List<CategoryData> _categories;
-    List<CurrencyData> _currencies;
+    List<TypeData> Types => GameManager.KakeiboManager.Types;
+    List<CategoryData> Categories => GameManager.KakeiboManager.Categories;
+    List<CurrencyData> Currencies => GameManager.KakeiboManager.Currencies;
 
     void Awake()
     {
         submitButton.onClick.AddListener(SaveExpenseHandler);
         backButton.onClick.AddListener(OpenHomePanelHandler);
-
-        _types = GameManager.KakeiboManager.GetAllTypes();
-        _categories = GameManager.KakeiboManager.GetAllCategories();
-        _currencies = GameManager.KakeiboManager.GetAllCurrencies();
     }
 
     public void Initialize()
@@ -42,12 +38,12 @@ public class ExpenseFormPanel : MonoBehaviour
         datePicker.SelectedDate = DateTime.Now;
         billingDatePicker.SelectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         typeDropdown.ClearOptions();
-        typeDropdown.AddOptions(_types.Select(c => c.Name).ToList());
+        typeDropdown.AddOptions(Types.Select(c => c.Name).ToList());
         categoryDropdown.ClearOptions();
-        categoryDropdown.AddOptions(_categories.Select(c => c.Name).ToList());
+        categoryDropdown.AddOptions(Categories.Select(c => c.Name).ToList());
         amountInput.text = string.Empty;
         currencyDropdown.ClearOptions();
-        currencyDropdown.AddOptions(_currencies.Select(c => c.Name).ToList());
+        currencyDropdown.AddOptions(Currencies.Select(c => c.Name).ToList());
         descriptionInput.text = string.Empty;
     }
 
@@ -58,15 +54,15 @@ public class ExpenseFormPanel : MonoBehaviour
             return;
         }
 
-        var type = _types[typeDropdown.value];
+        var type = Types[typeDropdown.value];
         var expenseData = new ExpenseData()
         {
             Date = datePicker.SelectedDate.Date,
             BillingDate = billingDatePicker.SelectedDate.Date,
-            Type = _types[typeDropdown.value],
-            Category = _categories[categoryDropdown.value],
+            Type = Types[typeDropdown.value],
+            Category = Categories[categoryDropdown.value],
             Amount = decimal.Parse(amountInput.text),
-            Currency = _currencies[currencyDropdown.value],
+            Currency = Currencies[currencyDropdown.value],
             Description = descriptionInput.text,
             Paid = type.IsDebit,
         };

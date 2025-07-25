@@ -8,11 +8,37 @@ public class KakeiboManager : MonoBehaviour
 {
     SQLController _sqlController;
 
+    public List<TypeData> Types { get; private set; }
+    public List<CategoryData> Categories { get; private set; }
+    public List<CurrencyData> Currencies { get; private set; }
+
     public void Initialize(SQLController sqlController)
     {
         _sqlController = sqlController;
 
         AddDefaults();
+        GetFixedData();
+
+        //DELETE after local test
+        var test1 = _sqlController.GetAll<IncomeSQLData>();
+        var test2 = new List<IncomeData>();
+        foreach (var i in test1)
+        {
+            var id = new IncomeData(i);
+            test2.Add(id);
+        }
+
+        _sqlController.UpdateAll(test2.Select(id => id.ToSQLData()));
+
+        var test3 = _sqlController.GetAll<ExpenseSQLData>();
+        var test4 = new List<ExpenseData>();
+        foreach (var i in test3)
+        {
+            var id = new ExpenseData(i);
+            test4.Add(id);
+        }
+
+        _sqlController.UpdateAll(test4.Select(id => id.ToSQLData()));
     }
 
     void AddDefaults()
@@ -69,6 +95,13 @@ public class KakeiboManager : MonoBehaviour
         }
     }
 
+    void GetFixedData()
+    {
+        Types = GetAllTypes();
+        Categories = GetAllCategories();
+        Currencies = GetAllCurrencies();
+    }
+
     void AddType(string typeName)
     {
         var debitType = new TypeSQLData()
@@ -76,6 +109,27 @@ public class KakeiboManager : MonoBehaviour
             Name = typeName
         };
         _sqlController.Insert<TypeSQLData>(debitType);
+    }
+
+    public TypeData GetTypeById(int typeId)
+    {
+        var sqlData = _sqlController.GetById<TypeSQLData>(typeId);
+        var typeData = new TypeData(sqlData);
+
+        return typeData;
+    }
+
+    public List<TypeData> GetAllTypes()
+    {
+        var types = new List<TypeData>();
+        var data = _sqlController.GetAll<TypeSQLData>();
+        foreach (var sqlData in data)
+        {
+            var type = new TypeData(sqlData);
+            types.Add(type);
+        }
+
+        return types;
     }
 
     void AddCategorySection(string categoryName)
@@ -97,10 +151,60 @@ public class KakeiboManager : MonoBehaviour
         _sqlController.Insert<CategorySQLData>(category);
     }
 
+    public CategorySectionData GetCategorySectionById(int categorySectionId)
+    {
+        var sqlData = _sqlController.GetById<CategorySectionSQLData>(categorySectionId);
+        var categorySection = new CategorySectionData(sqlData);
+
+        return categorySection;
+    }
+
+    public CategoryData GetCategoryById(int categoryId)
+    {
+        var sqlData = _sqlController.GetById<CategorySQLData>(categoryId);
+        var category = new CategoryData(sqlData);
+
+        return category;
+    }
+
+    public List<CategoryData> GetAllCategories()
+    {
+        var categories = new List<CategoryData>();
+        var data = _sqlController.GetAll<CategorySQLData>();
+        foreach (var sqlData in data)
+        {
+            var category = new CategoryData(sqlData);
+            categories.Add(category);
+        }
+
+        return categories;
+    }
+
     public void AddCurrency(CurrencyData currencyData)
     {
         var currency = currencyData.ToSQLData();
         _sqlController.Insert<CurrencySQLData>(currency);
+    }
+
+    public List<CurrencyData> GetAllCurrencies()
+    {
+        var currencies = new List<CurrencyData>();
+        var data = _sqlController.GetAll<CurrencySQLData>();
+        foreach (var sqlData in data)
+        {
+            var currency = new CurrencyData(sqlData);
+            currencies.Add(currency);
+        }
+
+        return currencies;
+    }
+
+    public CurrencyData GetCurrencyById(int id)
+    {
+        var sqlData = _sqlController.GetById<CurrencySQLData>(id);
+        var currencyData = new CurrencyData(sqlData);
+
+        return currencyData;
     }
 
     public void AddIncome(IncomeData incomeData)
@@ -144,25 +248,28 @@ public class KakeiboManager : MonoBehaviour
         return expenses;
     }
 
-    public List<CurrencyData> GetAllCurrencies()
+    public void UpdateExpenses(List<ExpenseData> expensesData)
     {
-        var currencies = new List<CurrencyData>();
-        var data = _sqlController.GetAll<CurrencySQLData>();
-        foreach (var sqlData in data)
+        var notPaidExpenses = expensesData.Where(e => !e.Paid).ToList();
+        foreach (var expenses in notPaidExpenses)
         {
-            var currency = new CurrencyData(sqlData);
-            currencies.Add(currency);
+            expenses.Paid = true;
         }
 
-        return currencies;
+        var sqlData = notPaidExpenses.Select(e => e.ToSQLData());
+        _sqlController.UpdateAll(sqlData);
+
+        var totalPaid = notPaidExpenses.Sum(e => e.Amount);
+        var summary = GetSummaryData(2025); //todo where to get
+        summary.TotalExpenses += totalPaid;
+        summary.CreditHold -= totalPaid;
+        UpdateSummary(summary);
     }
 
-    public CurrencyData GetCurrencyById(int id)
+    public void AddSummary(SummaryData summaryData)
     {
-        var sqlData = _sqlController.GetById<CurrencySQLData>(id);
-        var currencyData = new CurrencyData(sqlData);
-
-        return currencyData;
+        var summary = summaryData.ToSQLData();
+        _sqlController.Insert<SummarySQLData>(summary);
     }
 
     public SummaryData GetSummaryData(int year)
@@ -178,12 +285,6 @@ public class KakeiboManager : MonoBehaviour
         return summaryData;
     }
 
-    public void AddSummary(SummaryData summaryData)
-    {
-        var summary = summaryData.ToSQLData();
-        _sqlController.Insert<SummarySQLData>(summary);
-    }
-
     public void UpdateSummary(SummaryData summaryData)
     {
         var summary = summaryData.ToSQLData();
@@ -192,21 +293,21 @@ public class KakeiboManager : MonoBehaviour
 
     void ForceUpdateSummary(int year)
     {
+        var sqlData = _sqlController.GetBy<SummarySQLData>(s => s.Year == year);
+        SummaryData summaryData = new SummaryData(sqlData);
+
         var totalIncome = _sqlController.GetAllBy<IncomeSQLData>(
             i => i.Year == year).Sum(i => i.Amount);
         var totalExpenses = _sqlController.GetAllBy<ExpenseSQLData>(
             e => e.BillingYear == year && e.Paid).Sum(e => e.Amount);
         var creditHold = _sqlController.GetAllBy<ExpenseSQLData>(
             e => e.BillingYear == year && !e.Paid).Sum(e => e.Amount);
-        SummaryData summaryData = new SummaryData
-        {
-            Year = year,
-            TotalIncome = totalIncome,
-            TotalExpenses = totalExpenses,
-            CreditHold = creditHold
-        };
 
-        var sqlData = _sqlController.GetBy<SummarySQLData>(s => s.Year == year);
+        summaryData.Year = year;
+        summaryData.TotalIncome = totalIncome;
+        summaryData.TotalExpenses = totalExpenses;
+        summaryData.CreditHold = creditHold;
+
         if (sqlData == null)
         {
             AddSummary(summaryData);
@@ -215,55 +316,5 @@ public class KakeiboManager : MonoBehaviour
         {
             UpdateSummary(summaryData);
         }
-    }
-
-    public CategorySectionData GetCategorySectionById(int categorySectionId)
-    {
-        var sqlData = _sqlController.GetById<CategorySectionSQLData>(categorySectionId);
-        var categorySection = new CategorySectionData(sqlData);
-
-        return categorySection;
-    }
-
-    public CategoryData GetCategoryById(int categoryId)
-    {
-        var sqlData = _sqlController.GetById<CategorySQLData>(categoryId);
-        var category = new CategoryData(sqlData);
-
-        return category;
-    }
-
-    public TypeData GetTypeById(int typeId)
-    {
-        var sqlData = _sqlController.GetById<TypeSQLData>(typeId);
-        var typeData = new TypeData(sqlData);
-
-        return typeData;
-    }
-
-    public List<TypeData> GetAllTypes()
-    {
-        var types = new List<TypeData>();
-        var data = _sqlController.GetAll<TypeSQLData>();
-        foreach (var sqlData in data)
-        {
-            var type = new TypeData(sqlData);
-            types.Add(type);
-        }
-
-        return types;
-    }
-
-    public List<CategoryData> GetAllCategories()
-    {
-        var categories = new List<CategoryData>();
-        var data = _sqlController.GetAll<CategorySQLData>();
-        foreach (var sqlData in data)
-        {
-            var category = new CategoryData(sqlData);
-            categories.Add(category);
-        }
-
-        return categories;
     }
 }

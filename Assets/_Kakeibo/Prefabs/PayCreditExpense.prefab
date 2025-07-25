@@ -244,8 +244,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd4f90348f75140c9bed8f70984724cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  incomeValueText: {fileID: 0}
-  expenseButton: {fileID: 0}
+  incomeValueText: {fileID: 458587768000199004}
+  selectedButton: {fileID: 7892010884783558862}
+  buttonLabel: {fileID: 6267621078237764043}
 --- !u!1 &7889598005854645999
 GameObject:
   m_ObjectHideFlags: 0

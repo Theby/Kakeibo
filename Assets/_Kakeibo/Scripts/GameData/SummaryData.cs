@@ -15,11 +15,15 @@ public class SummaryData
     public SummaryData(SummarySQLData sqlData)
     {
         _sqlData = sqlData;
+        if (_sqlData == null)
+        {
+            return;
+        }
 
         Year = _sqlData.Year;
-        TotalIncome = sqlData.TotalIncome;
-        TotalExpenses = sqlData.TotalExpenses;
-        CreditHold = sqlData.CreditHold;
+        TotalIncome = _sqlData.TotalIncome;
+        TotalExpenses = _sqlData.TotalExpenses;
+        CreditHold = _sqlData.CreditHold;
     }
 
     public SummarySQLData ToSQLData()

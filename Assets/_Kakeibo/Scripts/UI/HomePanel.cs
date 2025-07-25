@@ -1,4 +1,3 @@
-using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,12 +15,14 @@ public class HomePanel : MonoBehaviour
     [SerializeField] Button incomeButton;
     [SerializeField] Button expenseButton;
     [SerializeField] Button seeExpensesButton;
+    [SerializeField] Button payCreditButton;
 
     public void Awake()
     {
         incomeButton.onClick.AddListener(OpenIncomePanelHandler);
         expenseButton.onClick.AddListener(OpenExpensePanelHandler);
         seeExpensesButton.onClick.AddListener(OpenSeeExpensesPanelHandler);
+        payCreditButton.onClick.AddListener(OpenPayCreditPanelHandler);
     }
 
     public void Initialize()
@@ -34,13 +35,11 @@ public class HomePanel : MonoBehaviour
         var creditHold = summaryData.CreditHold;
         var total = bank - creditHold;
 
-        CultureInfo culture = new CultureInfo("es-CL");
-
-        incomeValueText.SetText(income.ToString("C", culture));
-        expenseValueText.SetText(expenses.ToString("C", culture));
-        bankValueText.SetText(bank.ToString("C", culture));
-        creditValueText.SetText(creditHold.ToString("C", culture));
-        totalValueText.SetText(total.ToString("C", culture));
+        incomeValueText.SetText(income.ToCurrencyString());
+        expenseValueText.SetText(expenses.ToCurrencyString());
+        bankValueText.SetText(bank.ToCurrencyString());
+        creditValueText.SetText(creditHold.ToCurrencyString());
+        totalValueText.SetText(total.ToCurrencyString());
 
         versionText.SetText($"v{Application.version}");
     }
@@ -58,5 +57,10 @@ public class HomePanel : MonoBehaviour
     void OpenSeeExpensesPanelHandler()
     {
         GameManager.CanvasManager.ShowSeeExpensesPanel();
+    }
+
+    void OpenPayCreditPanelHandler()
+    {
+        GameManager.CanvasManager.ShowPayCreditsPanel();
     }
 }

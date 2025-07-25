@@ -6,6 +6,7 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] IncomeFormPanel incomeFormPanel;
     [SerializeField] ExpenseFormPanel expenseFormPanel;
     [SerializeField] SeeExpensesPanel seeExpensesFormPanel;
+    [SerializeField] PayCreditsPanel payCreditsPanel;
 
     void Awake()
     {
@@ -23,6 +24,7 @@ public class CanvasManager : MonoBehaviour
         incomeFormPanel.gameObject.SetActive(false);
         expenseFormPanel.gameObject.SetActive(false);
         seeExpensesFormPanel.gameObject.SetActive(false);
+        payCreditsPanel.gameObject.SetActive(false);
     }
 
     public void ShowHomePanel()
@@ -51,5 +53,12 @@ public class CanvasManager : MonoBehaviour
         HidePanels();
         seeExpensesFormPanel.gameObject.SetActive(true);
         seeExpensesFormPanel.Initialize();
+    }
+
+    public void ShowPayCreditsPanel()
+    {
+        HidePanels();
+        payCreditsPanel.gameObject.SetActive(true);
+        payCreditsPanel.Initialize();
     }
 }
