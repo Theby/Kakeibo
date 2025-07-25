@@ -18,27 +18,6 @@ public class KakeiboManager : MonoBehaviour
 
         AddDefaults();
         GetFixedData();
-
-        //DELETE after local test
-        var test1 = _sqlController.GetAll<IncomeSQLData>();
-        var test2 = new List<IncomeData>();
-        foreach (var i in test1)
-        {
-            var id = new IncomeData(i);
-            test2.Add(id);
-        }
-
-        _sqlController.UpdateAll(test2.Select(id => id.ToSQLData()));
-
-        var test3 = _sqlController.GetAll<ExpenseSQLData>();
-        var test4 = new List<ExpenseData>();
-        foreach (var i in test3)
-        {
-            var id = new ExpenseData(i);
-            test4.Add(id);
-        }
-
-        _sqlController.UpdateAll(test4.Select(id => id.ToSQLData()));
     }
 
     void AddDefaults()
