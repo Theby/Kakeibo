@@ -27,7 +27,7 @@ public class PayCreditExpenseLayout : MonoBehaviour
         selectedButton.onClick.RemoveAllListeners();
         selectedButton.onClick.AddListener(OnSelectedHandler);
 
-        SetIsSelectedButton(false);
+        SetIsSelectedButton(true);
     }
 
     void OnSelectedHandler()
