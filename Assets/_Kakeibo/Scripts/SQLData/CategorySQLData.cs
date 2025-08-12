@@ -2,18 +2,12 @@ using System;
 using SQLite;
 
 [Table("Categories")]
-public class CategorySQLData : SQLiteData
+public record CategorySQLData(
+    int Id,
+    bool Enabled,
+    long InputDate,
+    [property: Column("name")] string Name,
+    [property: Column("section_id"), Indexed] int SectionId) : SQLiteData(Id, Enabled, InputDate)
 {
-    [PrimaryKey, AutoIncrement]
-    [Column("id")]
-    public override int Id { get; set; }
-    [Column("enabled")]
-    public override bool Enabled { get; set; } = true;
-    [Column("input_date")]
-    public override long InputDate { get; set; } = DateTime.Now.Ticks;
-    [Column("name")]
-    public string Name { get; set; }
-    [Column("section_id")]
-    [Indexed]
-    public int SectionId { get; set; }
+    public CategorySQLData() : this(0, true, DateTime.Now.Ticks, string.Empty, 0){}
 }

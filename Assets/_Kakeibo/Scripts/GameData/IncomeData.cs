@@ -26,18 +26,17 @@ public class IncomeData
 
     public IncomeSQLData ToSQLData()
     {
-        IncomeSQLData incomeSQLData = new IncomeSQLData();
-        if (_sqlData != null)
-        {
-            incomeSQLData = _sqlData;
-        }
+        _sqlData = new IncomeSQLData(
+            _sqlData?.Id ?? 0,
+            _sqlData?.Enabled ?? true,
+            _sqlData?.InputDate ?? DateTime.Now.Ticks,
+            Date.Ticks,
+            Date.Year,
+            Amount,
+            Currency.SQLId,
+            Description
+        );
 
-        incomeSQLData.Date = Date.Ticks;
-        incomeSQLData.Year = Date.Year;
-        incomeSQLData.Amount = Amount;
-        incomeSQLData.CurrencyId = Currency.SQLId;
-        incomeSQLData.Description = Description;
-
-        return incomeSQLData;
+        return _sqlData;
     }
 }

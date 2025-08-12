@@ -1,12 +1,14 @@
+using System;
+
 public class CurrencyData
 {
     public string Name { get; set; }
     public string ShortName { get; set; }
     public string Symbol { get; set; }
     public string Format { get; set; }
+    public int SQLId => _sqlData.Id;
 
     CurrencySQLData _sqlData;
-    public int SQLId => _sqlData.Id;
 
     public CurrencyData()
     {
@@ -25,17 +27,16 @@ public class CurrencyData
 
     public CurrencySQLData ToSQLData()
     {
-        CurrencySQLData currencySqlData = new CurrencySQLData();
-        if (_sqlData != null)
-        {
-            currencySqlData = _sqlData;
-        }
+        _sqlData = new CurrencySQLData(
+            _sqlData?.Id ?? 0,
+            _sqlData?.Enabled ?? true,
+            _sqlData?.InputDate ?? DateTime.Now.Ticks,
+            Name,
+            ShortName,
+            Symbol,
+            Format
+        );
 
-        currencySqlData.Name = Name;
-        currencySqlData.ShortName = ShortName;
-        currencySqlData.Symbol = Symbol;
-        currencySqlData.Format = Format;
-
-        return currencySqlData;
+        return _sqlData;
     }
 }

@@ -2,15 +2,11 @@ using System;
 using SQLite;
 
 [Table("Types")]
-public class TypeSQLData : SQLiteData
+public record TypeSQLData(
+    int Id,
+    bool Enabled,
+    long InputDate,
+    [property: Column("name")] string Name) : SQLiteData(Id, Enabled, InputDate)
 {
-    [PrimaryKey, AutoIncrement]
-    [Column("id")]
-    public override int Id { get; set; }
-    [Column("enabled")]
-    public override bool Enabled { get; set; } = true;
-    [Column("input_date")]
-    public override long InputDate { get; set; } = DateTime.Now.Ticks;
-    [Column("name")]
-    public string Name { get; set; }
+    public TypeSQLData() : this(0, true, DateTime.Now.Ticks, string.Empty){}
 }

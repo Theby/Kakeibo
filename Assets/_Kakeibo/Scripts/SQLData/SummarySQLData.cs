@@ -2,21 +2,14 @@ using System;
 using SQLite;
 
 [Table("Summary")]
-public class SummarySQLData : SQLiteData
+public record SummarySQLData(
+    int Id,
+    bool Enabled,
+    long InputDate,
+    [property: Column("year")] int Year,
+    [property: Column("total_income")] decimal TotalIncome,
+    [property: Column("total_expenses")] decimal TotalExpenses,
+    [property: Column("credit_hold")] decimal CreditHold) : SQLiteData(Id, Enabled, InputDate)
 {
-    [PrimaryKey, AutoIncrement]
-    [Column("id")]
-    public override int Id { get; set; }
-    [Column("enabled")]
-    public override bool Enabled { get; set; } = true;
-    [Column("input_date")]
-    public override long InputDate { get; set; } = DateTime.Now.Ticks;
-    [Column("year")]
-    public int Year { get; set; }
-    [Column("total_income")]
-    public decimal TotalIncome { get; set; }
-    [Column("total_expenses")]
-    public decimal TotalExpenses { get; set; }
-    [Column("credit_hold")]
-    public decimal CreditHold { get; set; }
+    public SummarySQLData() : this(0, true, DateTime.Now.Ticks, 0, 0, 0, 0){}
 }

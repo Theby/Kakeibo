@@ -1,11 +1,12 @@
+using System;
+
 public class TypeData
 {
     public string Name { get; set; }
+    public int SQLId => _sqlData.Id;
+    public bool IsDebit => SQLId == 1;
 
     TypeSQLData _sqlData;
-    public int SQLId => _sqlData.Id;
-
-    public bool IsDebit => SQLId == 1;
 
     public TypeData()
     {
@@ -21,14 +22,13 @@ public class TypeData
 
     public TypeSQLData ToSQLData()
     {
-        TypeSQLData typeSQLData = new TypeSQLData();
-        if (_sqlData != null)
-        {
-            typeSQLData = _sqlData;
-        }
+        _sqlData = new TypeSQLData(
+            _sqlData?.Id ?? 0,
+            _sqlData?.Enabled ?? true,
+            _sqlData?.InputDate ?? DateTime.Now.Ticks,
+            Name
+        );
 
-        typeSQLData.Name = Name;
-
-        return typeSQLData;
+        return _sqlData;
     }
 }

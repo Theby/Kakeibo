@@ -34,24 +34,23 @@ public class ExpenseData
 
     public ExpenseSQLData ToSQLData()
     {
-        ExpenseSQLData expenseSQLData = new ExpenseSQLData();
-        if (_sqlData != null)
-        {
-            expenseSQLData = _sqlData;
-        }
+        _sqlData = new ExpenseSQLData(
+            _sqlData?.Id ?? 0,
+            _sqlData?.Enabled ?? true,
+            _sqlData?.InputDate ?? DateTime.Now.Ticks,
+            Date.Ticks,
+            Date.Year,
+            Date.Month,
+            BillingDate.Year,
+            BillingDate.Month,
+            Type.SQLId,
+            Category.SQLId,
+            Amount,
+            Currency.SQLId,
+            Description,
+            Paid
+        );
 
-        expenseSQLData.Date = Date.Ticks;
-        expenseSQLData.Year = Date.Year;
-        expenseSQLData.Month = Date.Month;
-        expenseSQLData.BillingYear = BillingDate.Year;
-        expenseSQLData.BillingMonth = BillingDate.Month;
-        expenseSQLData.TypeId = Type.SQLId;
-        expenseSQLData.CategoryId = Category.SQLId;
-        expenseSQLData.Amount = Amount;
-        expenseSQLData.CurrencyId = Currency.SQLId;
-        expenseSQLData.Description = Description;
-        expenseSQLData.Paid = Paid;
-
-        return expenseSQLData;
+        return _sqlData;
     }
 }

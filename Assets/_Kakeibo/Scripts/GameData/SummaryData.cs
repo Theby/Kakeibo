@@ -1,3 +1,5 @@
+using System;
+
 public class SummaryData
 {
     public int Year { get; set; }
@@ -28,17 +30,16 @@ public class SummaryData
 
     public SummarySQLData ToSQLData()
     {
-        SummarySQLData summarySQLData = new SummarySQLData();
-        if (_sqlData != null)
-        {
-            summarySQLData = _sqlData;
-        }
+        _sqlData = new SummarySQLData(
+            _sqlData?.Id ?? 0,
+            _sqlData?.Enabled ?? true,
+            _sqlData?.InputDate ?? DateTime.Now.Ticks,
+            Year,
+            TotalIncome,
+            TotalExpenses,
+            CreditHold
+        );
 
-        summarySQLData.Year = Year;
-        summarySQLData.TotalIncome = TotalIncome;
-        summarySQLData.TotalExpenses = TotalExpenses;
-        summarySQLData.CreditHold = CreditHold;
-
-        return summarySQLData;
+        return _sqlData;
     }
 }

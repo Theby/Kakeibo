@@ -2,38 +2,21 @@ using System;
 using SQLite;
 
 [Table("Expenses")]
-public class ExpenseSQLData : SQLiteData
+public record ExpenseSQLData(
+    int Id,
+    bool Enabled,
+    long InputDate,
+    [property: Column("date")] long Date,
+    [property: Column("year")] int Year,
+    [property: Column("month")] int Month,
+    [property: Column("billing_year")] int BillingYear,
+    [property: Column("billing_month")] int BillingMonth,
+    [property: Column("type_id"), Indexed] int TypeId,
+    [property: Column("category_id"), Indexed] int CategoryId,
+    [property: Column("amount")] decimal Amount,
+    [property: Column("currency_id"), Indexed] int CurrencyId,
+    [property: Column("description")] string Description,
+    [property: Column("paid")] bool Paid) : SQLiteData(Id, Enabled, InputDate)
 {
-    [PrimaryKey, AutoIncrement]
-    [Column("id")]
-    public override int Id { get; set; }
-    [Column("enabled")]
-    public override bool Enabled { get; set; } = true;
-    [Column("input_date")]
-    public override long InputDate { get; set; } = DateTime.Now.Ticks;
-    [Column("date")]
-    public long Date { get; set; }
-    [Column("year")]
-    public int Year { get; set; }
-    [Column("month")]
-    public int Month { get; set; }
-    [Column("billing_year")]
-    public int BillingYear { get; set; }
-    [Column("billing_month")]
-    public int BillingMonth { get; set; }
-    [Column("type_id")]
-    [Indexed]
-    public int TypeId { get; set; }
-    [Column("category_id")]
-    [Indexed]
-    public int CategoryId { get; set; }
-    [Column("amount")]
-    public decimal Amount { get; set; }
-    [Column("currency_id")]
-    [Indexed]
-    public int CurrencyId { get; set; }
-    [Column("description")]
-    public string Description { get; set; }
-    [Column("paid")]
-    public bool Paid { get; set; }
+    public ExpenseSQLData() : this(0, true, DateTime.Now.Ticks, 0, 0, 0, 0, 0, 0, 0, 0, 0, string.Empty, false){}
 }

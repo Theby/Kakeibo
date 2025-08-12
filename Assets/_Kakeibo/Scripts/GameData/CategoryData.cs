@@ -1,10 +1,12 @@
+using System;
+
 public class CategoryData
 {
     public string Name { get; set; }
     public CategorySectionData CategorySection { get; set; }
+    public int SQLId => _sqlData.Id;
 
     CategorySQLData _sqlData;
-    public int SQLId => _sqlData.Id;
 
     public CategoryData()
     {
@@ -21,15 +23,14 @@ public class CategoryData
 
     public CategorySQLData ToSQLData()
     {
-        CategorySQLData categorySQLData = new CategorySQLData();
-        if (_sqlData != null)
-        {
-            categorySQLData = _sqlData;
-        }
+        _sqlData = new CategorySQLData(
+            _sqlData?.Id ?? 0,
+            _sqlData?.Enabled ?? true,
+            _sqlData?.InputDate ?? DateTime.Now.Ticks,
+            Name,
+            CategorySection.SQLId
+        );
 
-        categorySQLData.Name = Name;
-        categorySQLData.SectionId = CategorySection.SQLId;
-
-        return categorySQLData;
+        return _sqlData;
     }
 }
