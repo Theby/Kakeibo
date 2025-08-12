@@ -20,7 +20,7 @@ public class SeeExpensesPanel : MonoBehaviour
         content.transform.DestroyChildren();
         scrollRect.verticalNormalizedPosition = 0;
 
-        var expenses = GameManager.KakeiboManager.GetExpensesBy(e => !e.Paid || e.BillingYear == 2025 && e.BillingMonth == 7);
+        var expenses = GameManager.KakeiboManager.GetExpensesBy(e => (!e.Paid && e.TypeId == 1) || (e.BillingYear == 2025 && e.BillingMonth == 8 && e.TypeId != 1));
         var sortedExpenses = expenses.OrderBy(e => e.Date);
 
         foreach (var expenseData in sortedExpenses)
